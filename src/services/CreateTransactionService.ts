@@ -41,7 +41,7 @@ class CreateTransactionService {
       title,
       value,
       type,
-      category_id: categoryExist.id,
+      category: categoryExist,
     });
 
     await transactionRepository.save(newTransaction);

@@ -1,11 +1,12 @@
-import {MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreateTransactionTableAndCategoriesTable1606185450381 implements MigrationInterface {
+// eslint-disable-next-line import/prefer-default-export
+export class CreateTransactionTableAndCategoriesTable1606185450381
+  implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
-
-      await queryRunner.createTable(
+    await queryRunner.createTable(
       new Table({
         name: 'transactions',
         columns: [
@@ -29,14 +30,10 @@ export class CreateTransactionTableAndCategoriesTable1606185450381 implements Mi
 
           {
             name: 'value',
-            type: 'integer',
+            type: 'decimal',
+            precision: 10,
+            scale: 2,
           },
-
-          {
-            name: 'category_id',
-            type: 'uuid',
-          },
-
           {
             name: 'created_at',
             type: 'timestamp',
@@ -80,26 +77,10 @@ export class CreateTransactionTableAndCategoriesTable1606185450381 implements Mi
         ],
       }),
     );
+  }
 
-    await queryRunner.createForeignKey(
-      'transactions',
-      new TableForeignKey({
-        name: 'TransactionsCategory',
-        columnNames: ['category_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'categories',
-        onDelete: 'SET NULL',
-        onUpdate: 'CASCADE',
-      }),
-    );
-    }
-
-    public async down(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.dropForeignKey('transactions', 'TransactionsCategory');
-
-      await queryRunner.dropTable("categories")
-
-      await queryRunner.dropTable("transactions")
-    }
-
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable('categories');
+    await queryRunner.dropTable('transactions');
+  }
 }
